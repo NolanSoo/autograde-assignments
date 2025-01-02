@@ -980,6 +980,11 @@ document.getElementById("next-button").addEventListener("click", () => {
   
    // Add assignment functionality  
    const assignmentNumber = 1; // Change this to the desired assignment number  
+     const assignmentData = {
+  "John Doe": "99",
+  "Jane Smith": "50",
+  "Alice Johnson": "2",
+};
    // const assignmentData = {};  
   
    // // Load assignment data from assignments.js  
@@ -1064,11 +1069,7 @@ document.getElementById("next-button").addEventListener("click", () => {
     </table>  
    `;  
    document.body.appendChild(teacherPage);  
-  const assignmentData = {
-  "John Doe": "99",
-  "Jane Smith": "50",
-  "Alice Johnson": "2",
-};
+
    // Function to view grades  
    function viewGrades() {  
     const gradesTable = document.getElementById('grades_table');  
