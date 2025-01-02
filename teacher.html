@@ -1,0 +1,44 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <title>Teacher Page</title>  
+</head>  
+<body>  
+  <h1>Teacher Page</h1>  
+  <h2>View Grades</h2>  
+  <table id="grades_table">  
+   <tr>  
+    <th>Student Name</th>  
+    <th>Grade</th>  
+   </tr>  
+  </table>  
+  <script>  
+   // Get the assignment number from the URL  
+   const urlParams = new URLSearchParams(window.location.search);  
+   const assignmentNumber = urlParams.get('assignment');  
+  
+   // Load the assignment data  
+   fetch(`assignments${assignmentNumber}.json`)  
+    .then(response => response.json())  
+    .then(data => {  
+      const assignmentData = data;  
+      // View grades  
+      viewGrades();  
+    });  
+  
+   // Function to view grades  
+   function viewGrades() {  
+    const gradesTable = document.getElementById('grades_table');  
+    Object.keys(assignmentData).forEach(studentName => {  
+      const grade = assignmentData[studentName];  
+      const row = document.createElement('tr');  
+      row.innerHTML = `  
+       <td>${studentName}</td>  
+       <td>${grade}</td>  
+      `;  
+      gradesTable.appendChild(row);  
+    });  
+   }  
+  </script>  
+</body>  
+</html>
