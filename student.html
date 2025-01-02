@@ -1,0 +1,50 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <title>Student Page</title>  
+</head>  
+<body>  
+  <h1>Student Page</h1>  
+  <h2>Submit Assignment</h2>  
+  <textarea id="student_essay_input" rows="4" cols="50" placeholder="Paste/type essay to submit"></textarea>  
+  <br/>  
+  <input type="text" id="student_name" placeholder="Enter your name">  
+  <br/>  
+  <input type="button" id="submit_assignment" value="Submit Assignment">  
+  <script>  
+   // Get the assignment number from the URL  
+   const urlParams = new URLSearchParams(window.location.search);  
+   const assignmentNumber = urlParams.get('assignment');  
+  
+   // Load the assignment data  
+   fetch(`assignments${assignmentNumber}.json`)  
+    .then(response => response.json())  
+    .then(data => {  
+      const assignmentData = data;  
+      // Train the model and predict the grade  
+      trainModel();  
+      predictGrade();  
+  
+      // Save the grade to the assignment data  
+      assignmentData[document.getElementById('student_name').value] = predictedGrade;  
+      saveAssignmentData();  
+    });  
+  
+   // Function to submit assignment  
+   function submitAssignment() {  
+    const studentEssay = document.getElementById('student_essay_input').value;  
+    const studentName = document.getElementById('student_name').value;  
+    // Train model and predict grade  
+    trainModel();  
+    predictGrade();  
+  
+    // Save grade to assignment data  
+    assignmentData[studentName] = predictedGrade;  
+    saveAssignmentData();  
+   }  
+  
+   // Add event listener for submit assignment button  
+   document.getElementById('submit_assignment').addEventListener('click', submitAssignment);  
+  </script>  
+</body>  
+</html>
