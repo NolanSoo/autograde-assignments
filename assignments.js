@@ -1,3 +1,4 @@
 const assignmentData = {  
-"Beast Student": 99;
+"Best Student": 99;
+"Ima Bad Student": 1;
 };  
