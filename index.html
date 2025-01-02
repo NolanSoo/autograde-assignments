@@ -989,67 +989,6 @@ document.getElementById("next-button").addEventListener("click", () => {
    //    assignmentData = data;  
    //  });  
   
-   // Function to save assignment data  
-   function saveAssignmentData() {  
-    const assignmentDataString = JSON.stringify(assignmentData);  
-    const blob = new Blob([assignmentDataString], {type: 'application/json'});  
-    const link = document.createElement('a');  
-    link.href = URL.createObjectURL(blob);  
-    link.download = `assignment${assignmentNumber}.json`;  
-    link.click();  
-   }  
-  
-   // Function to load assignment data  
-   function loadAssignmentData() {  
-    const fileInput = document.getElementById('upload_data');  
-    const file = fileInput.files[0];  
-    const reader = new FileReader();  
-    reader.onload = () => {  
-      const data = JSON.parse(reader.result);  
-      assignmentData = data;  
-    };  
-    reader.readAsText(file);  
-   }  
-  
-   // Add event listeners for assignment functionality  
-   document.getElementById('download_data').addEventListener('click', saveAssignmentData);  
-   document.getElementById('upload_data').addEventListener('change', loadAssignmentData);  
-  
-   // Create student page  
-   const studentPage = document.createElement('div');  
-   studentPage.innerHTML = `  
-    <h1>Student Page</h1>  
-    <h2>Submit Assignment</h2>  
-    <textarea id="student_essay_input" rows="4" cols="50" placeholder="Paste/type essay to submit"></textarea>  
-    <br/>  
-    <input type="text" id="student_name" placeholder="Enter your name">  
-    <br/>  
-    <input type="button" id="submit_assignment" value="Submit Assignment">  
-   `;  
-   document.body.appendChild(studentPage);  
-  
-   // Function to submit assignment  
-   function submitAssignment() {  
-    const studentEssay = document.getElementById('student_essay_input').value;  
-    const studentName = document.getElementById('student_name').value;  
-    const assignmentDataString = JSON.stringify(assignmentData);  
-    const blob = new Blob([assignmentDataString], {type: 'application/json'});  
-    const link = document.createElement('a');  
-    link.href = URL.createObjectURL(blob);  
-    link.download = `assignment${assignmentNumber}.json`;  
-    link.click();  
-  
-    // Train model and predict grade  
-    trainModel();  
-    predictGrade();  
-  
-    // Save grade to assignment data  
-    assignmentData[studentName] = predictedGrade;  
-    saveAssignmentData();  
-   }  
-  
-   // Add event listener for submit assignment button  
-   document.getElementById('submit_assignment').addEventListener('click', submitAssignment);  
   
    // Create teacher page  
    const teacherPage = document.createElement('div');  
