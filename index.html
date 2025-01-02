@@ -1065,12 +1065,13 @@ document.getElementById("next-button").addEventListener("click", () => {
    `;  
    document.body.appendChild(teacherPage);  
 
-  // Sample assignment data
-    const assignmentData = {
+  let assignmentData = {
       "John Doe": "A",
       "Jane Smith": "B",
       "Alice Johnson": "A+",
     };
+
+    let currentIndex = 0;
 
     // Function to view grades
     function viewGrades() {
@@ -1091,8 +1092,51 @@ document.getElementById("next-button").addEventListener("click", () => {
       });
     }
 
-    // Add event listener for view grades button
-    document.getElementById('view_grades').addEventListener('click', viewGrades); 
+    // Function to save assignment data
+    function saveAssignmentData() {
+      const assignmentDataString = JSON.stringify(assignmentData);
+      const blob = new Blob([assignmentDataString], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `assignment_data.json`;
+      link.click();
+    }
+
+    // Function to load assignment data
+    function loadAssignmentData() {
+      const fileInput = document.getElementById('upload_data');
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        assignmentData = JSON.parse(reader.result);
+      };
+      reader.readAsText(file);
+    }
+
+    // Function to submit assignment
+    function submitAssignment() {
+      const studentEssay = document.getElementById('student_essay_input').value;
+      const studentName = document.getElementById('student_name').value;
+
+      if (!studentEssay || !studentName) {
+        alert("Please enter your name and essay.");
+        return;
+      }
+
+      // Placeholder grade prediction
+      const predictedGrade = "B"; // Simulate prediction for now
+
+      // Save grade to assignment data
+      assignmentData[studentName] = predictedGrade;
+      saveAssignmentData();
+      alert(`Assignment submitted! Grade: ${predictedGrade}`);
+    }
+
+    // Add event listeners
+    document.getElementById('view_grades').addEventListener('click', viewGrades);
+    document.getElementById('download_data').addEventListener('click', saveAssignmentData);
+    document.getElementById('upload_data').addEventListener('change', loadAssignmentData);
+    document.getElementById('submit_assignment').addEventListener('click', submitAssignment);
   </script>  
 </body>  
 </html>
