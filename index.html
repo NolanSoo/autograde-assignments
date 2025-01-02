@@ -980,11 +980,6 @@ document.getElementById("next-button").addEventListener("click", () => {
   
    // Add assignment functionality  
    const assignmentNumber = 1; // Change this to the desired assignment number  
-     const assignmentData = {
-  "John Doe": "99",
-  "Jane Smith": "50",
-  "Alice Johnson": "2",
-};
    // const assignmentData = {};  
   
    // // Load assignment data from assignments.js  
@@ -1070,24 +1065,34 @@ document.getElementById("next-button").addEventListener("click", () => {
    `;  
    document.body.appendChild(teacherPage);  
 
-   // Function to view grades  
-   function viewGrades() {  
-    const gradesTable = document.getElementById('grades_table');  
-    const assignmentDataString = JSON.stringify(assignmentData);  
-    const data = JSON.parse(assignmentDataString);  
-    Object.keys(data).forEach(studentName => {  
-      const grade = data[studentName];  
-      const row = document.createElement('tr');  
-      row.innerHTML = `  
-       <td>${studentName}</td>  
-       <td>${grade}</td>  
-      `;  
-      gradesTable.appendChild(row);  
-    });  
-   }  
-  
-   // Add event listener for view grades button  
-   document.getElementById('view_grades').addEventListener('click', viewGrades);  
+  // Sample assignment data
+    const assignmentData = {
+      "John Doe": "A",
+      "Jane Smith": "B",
+      "Alice Johnson": "A+",
+    };
+
+    // Function to view grades
+    function viewGrades() {
+      const gradesTable = document.getElementById('grades_table');
+
+      // Clear existing rows (if any)
+      gradesTable.querySelectorAll("tr:not(:first-child)").forEach(row => row.remove());
+
+      // Populate table with grades
+      Object.keys(assignmentData).forEach(studentName => {
+        const grade = assignmentData[studentName];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${studentName}</td>
+          <td>${grade}</td>
+        `;
+        gradesTable.appendChild(row);
+      });
+    }
+
+    // Add event listener for view grades button
+    document.getElementById('view_grades').addEventListener('click', viewGrades); 
   </script>  
 </body>  
 </html>
