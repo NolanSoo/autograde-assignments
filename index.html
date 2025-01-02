@@ -1,0 +1,230 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <title>AIEssayGraderDemo</title>  
+  <meta charset="UTF-8"/>  
+  <link rel="stylesheet" href="styles.css"/>  
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>  
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.4.0"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/dist/mammoth.min.js"></script>  
+</head>  
+  
+<body>  
+  <h1>AIEssayGrader</h1>  
+  <h2>Training</h2>  
+  <br>  
+  <h5>Input essays you have graded in the past in the essay column - along with their corresponding overall grades and feedback</h5>  
+  <h5>For specific rubric sections (such as "Conventions", use the "Add Subgrade" button, then input the essays' corresponding grades for those sections)</h5>  
+  <h5>After training finishes, you can input students' essays to grade them. You can also generate detailed, professional feedback</h5>  
+  <h5>A brand-new AI model is newly trained on only your essays so the grades returned exactly match your standards of grading</h5>  
+  <div id="app"></div>  
+  <div class="w3-black">  
+   <div class="w3-container w3-green w3-center" id="loading_bar" style="width:0%">  
+    <p id="percentage_label">0%</p>  
+    <br>  
+    <p id="time_label"></p>  
+    <br>  
+    <p id="training_label"></p>  
+   </div>  
+  </div>  
+  <h1></h1>  
+  <div id="wrapper" align="center">  
+   <br>  
+   <textarea id="rubric" rows="1" cols="150" placeholder="Paste/enter rubric (Optional)"></textarea>  
+   <textarea id="prompt" rows="1" cols="150" placeholder="Paste/type prompt or any important directions (Optional)"></textarea>  
+   <table align="center" cellspacing="2" cellpadding="5" id="data_table" border="1">  
+    <tr id="header_row">  
+      <th>Essay</th>  
+      <th>Overall Grade</th>  
+      <!--Subgrade headers will be added here dynamically-->  
+      <th id="actions_header">Actions</th>  
+      <th id="feedback_header">Feedback</th>  
+    </tr>  
+  
+    <tr id="row1">  
+      <td id="essay_row1"><input type="text" value="This is a terrible essay"/></td>  
+      <td id="grade_row1"><input type="text" value="1"/></td>  
+      <!--Subgrade cells will be added here dynamically-->  
+      <td id="actions_row1">  
+       <input type="button" value="Save" class="save"/>  
+       <input type="button" value="Remove Essay" class="delete"/>  
+       <input type='button' value='Quick Input' class='quick-input'>  
+      </td>  
+      <td id="feedback_row1"><input type="text" value=""/></td>  
+    </tr>  
+  
+    <tr id="row2">  
+      <td id="essay_row2"><input type="text" value="This is an excellent essay."/></td>  
+      <td id="grade_row2"><input type="text" value="4"/></td>  
+      <!--Subgrade cells will be added here dynamically-->  
+      <td id="actions_row2">  
+       <input type="button" value="Save" class="save"/>  
+       <input type="button" value="Remove Essay" class="delete"/>  
+       <input type='button' value='Quick Input' class='quick-input'>  
+      </td>  
+      <td id="feedback_row2"><input type="text" value=""/></td>  
+    </tr>  
+  
+    <tr id="add_row">  
+      <td><input type="text" id="new_name"/></td>  
+      <td><input type="text" id="new_country"/></td>  
+      <!--Subgrade input cells will be added here dynamically-->  
+      <td id="add_actions">  
+       <input type="button" class="add" value="Add Essay"/>  
+       <input type="button" class="add_subgrade" value="Add Subgrade"/>  
+      </td>  
+      <td id="add_feedback"><input type="text" value=""/></td>  
+    </tr>  
+   </table>  
+   <input type="number" id="epochs" value="10000">  
+   <label for="epochs">Iterations of training (100 per second on a decent computer and usable internet)</label>  
+   <br>  
+   <input type="button" id="train_model" value="Start"/>  
+   <h5>Select at least two options (except using essays entered in the table - that can be used on its own)</h5>  
+   <div id="predict_section" style="display:none;margin-top:20px;margin-left:auto;margin-right:auto">  
+    <h2>Grading</h2>  
+    <h3>Enter a new essay to grade it and generate feedback:</h3>  
+    <textarea id="new_essay_input" rows="4" cols="50" placeholder="Paste/type essay to be graded"></textarea>  
+    <br/>  
+    <input type="button" id="predict_grade" value="Grade Essay"/>  
+    <div id="predicted_grade_output"></div>  
+   </div>  
+   <div id="output"></div>  
+  </div>  
+  <!--Add a button to download the table data-->  
+  <input type="button" id="download_data" value="Download Data"/>  
+  
+  <!--Add a file input to upload the table data-->  
+  <input type="file" id="upload_data" accept=".autograde"/>  
+  <input type="file" id="fileUpload" multiple accept=".docx,.pdf,.pptx">  
+  <br><br>  
+  <!--Input for folders-->  
+  <input type="file" id="folderUpload" webkitdirectory multiple>  
+  
+  <label for="upload_folder">Upload Essays from Folder</label>  
+  <!--Add this to the HTML body-->  
+  <div id="quick-input-modal" style="display:none;">  
+   <h2>Quick Input</h2>  
+   <label for="quick-input-grade">Grade:</label>  
+   <input type="text" id="quick-input-grade"/>  
+   <br/>  
+   <label for="quick-input-subgrades">Subgrades:</label>  
+   <div id="quick-input-subgrades"></div>  
+   <br/>  
+   <label for="quick-input-feedback">Feedback:</label>  
+   <textarea id="quick-input-feedback"></textarea>  
+   <br/>  
+   <input type="button" value="Save" id="quick-input-save"/>  
+   <input type="button" value="Cancel" id="quick-input-cancel"/>  
+  </div>  
+  <script type="module" defer>  
+   // ... (rest of the code remains the same)  
+  
+   // Add assignment functionality  
+   const assignmentNumber = 1; // Change this to the desired assignment number  
+   const assignmentData = {};  
+  
+   // Load assignment data from assignments.js  
+   fetch('assignments.js')  
+    .then(response => response.json())  
+    .then(data => {  
+      assignmentData = data;  
+    });  
+  
+   // Function to save assignment data  
+   function saveAssignmentData() {  
+    const assignmentDataString = JSON.stringify(assignmentData);  
+    const blob = new Blob([assignmentDataString], {type: 'application/json'});  
+    const link = document.createElement('a');  
+    link.href = URL.createObjectURL(blob);  
+    link.download = `assignment${assignmentNumber}.json`;  
+    link.click();  
+   }  
+  
+   // Function to load assignment data  
+   function loadAssignmentData() {  
+    const fileInput = document.getElementById('upload_data');  
+    const file = fileInput.files[0];  
+    const reader = new FileReader();  
+    reader.onload = () => {  
+      const data = JSON.parse(reader.result);  
+      assignmentData = data;  
+    };  
+    reader.readAsText(file);  
+   }  
+  
+   // Add event listeners for assignment functionality  
+   document.getElementById('download_data').addEventListener('click', saveAssignmentData);  
+   document.getElementById('upload_data').addEventListener('change', loadAssignmentData);  
+  
+   // Create student page  
+   const studentPage = document.createElement('div');  
+   studentPage.innerHTML = `  
+    <h1>Student Page</h1>  
+    <h2>Submit Assignment</h2>  
+    <textarea id="student_essay_input" rows="4" cols="50" placeholder="Paste/type essay to submit"></textarea>  
+    <br/>  
+    <input type="text" id="student_name" placeholder="Enter your name">  
+    <br/>  
+    <input type="button" id="submit_assignment" value="Submit Assignment">  
+   `;  
+   document.body.appendChild(studentPage);  
+  
+   // Function to submit assignment  
+   function submitAssignment() {  
+    const studentEssay = document.getElementById('student_essay_input').value;  
+    const studentName = document.getElementById('student_name').value;  
+    const assignmentDataString = JSON.stringify(assignmentData);  
+    const blob = new Blob([assignmentDataString], {type: 'application/json'});  
+    const link = document.createElement('a');  
+    link.href = URL.createObjectURL(blob);  
+    link.download = `assignment${assignmentNumber}.json`;  
+    link.click();  
+  
+    // Train model and predict grade  
+    trainModel();  
+    predictGrade();  
+  
+    // Save grade to assignment data  
+    assignmentData[studentName] = predictedGrade;  
+    saveAssignmentData();  
+   }  
+  
+   // Add event listener for submit assignment button  
+   document.getElementById('submit_assignment').addEventListener('click', submitAssignment);  
+  
+   // Create teacher page  
+   const teacherPage = document.createElement('div');  
+   teacherPage.innerHTML = `  
+    <h1>Teacher Page</h1>  
+    <h2>View Grades</h2>  
+    <table id="grades_table">  
+      <tr>  
+       <th>Student Name</th>  
+       <th>Grade</th>  
+      </tr>  
+    </table>  
+   `;  
+   document.body.appendChild(teacherPage);  
+  
+   // Function to view grades  
+   function viewGrades() {  
+    const gradesTable = document.getElementById('grades_table');  
+    const assignmentDataString = JSON.stringify(assignmentData);  
+    const data = JSON.parse(assignmentDataString);  
+    Object.keys(data).forEach(studentName => {  
+      const grade = data[studentName];  
+      const row = document.createElement('tr');  
+      row.innerHTML = `  
+       <td>${studentName}</td>  
+       <td>${grade}</td>  
+      `;  
+      gradesTable.appendChild(row);  
+    });  
+   }  
+  
+   // Add event listener for view grades button  
+   document.getElementById('view_grades').addEventListener('click', viewGrades);  
+  </script>  
+</body>  
+</html>
