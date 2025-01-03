@@ -987,28 +987,28 @@
   
    // Function to create assignment files  
    function createAssignmentFiles(assignmentName) {  
-    const assignmentHtml = `  
-      <html>  
-       <body>  
-        <h1>${assignmentName}</h1>  
-        <textarea id="essay_input" rows="10" cols="50" placeholder="Paste/type essay to be graded"></textarea>  
-        <br/>  
-        <input type="button" id="submit_essay" value="Submit Essay"/>  
-        <div id="grade_output"></div>  
-        <script>  
-          const essayInput = document.getElementById('essay_input');  
-          const submitButton = document.getElementById('submit_essay');  
-          const gradeOutput = document.getElementById('grade_output');  
+   const assignmentHtml = `  
+  <html>  
+   <body>  
+    <h1>${assignmentName}</h1>  
+    <textarea id="essay_input" rows="10" cols="50" placeholder="Paste/type essay to be graded"></textarea>  
+    <br/>  
+    <input type="button" id="submit_essay" value="Submit Essay"/>  
+    <div id="grade_output"></div>  
+    <script>  
+      const essayInput = document.getElementById('essay_input');  
+      const submitButton = document.getElementById('submit_essay');  
+      const gradeOutput = document.getElementById('grade_output');  
   
-          submitButton.addEventListener('click', async () => {  
-           const essayText = essayInput.value;  
-           const grade = await predictGrade(essayText);  
-           gradeOutput.innerText = `Grade: ${grade}`;  
-          });  
-        </script>  
-       </body>  
-      </html>  
-    `;  
+      submitButton.addEventListener('click', async () => {  
+       const essayText = essayInput.value;  
+       const grade = await predictGrade(essayText);  
+       gradeOutput.innerText = 'Grade: ' + grade;  
+      });  
+    </script>  
+   </body>  
+  </html>  
+`;
   
     const teacherHtml = `  
       <html>  
