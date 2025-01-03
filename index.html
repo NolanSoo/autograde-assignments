@@ -987,9 +987,14 @@
   
    // Function to create assignment files  
    function createAssignmentFiles(assignmentName) {  
-   const assignmentHtml = `  
-  <html>  
-   <body>  
+   const fs = require('fs');
+
+// Sanitize assignmentName to ensure valid filenames
+const sanitizedAssignmentName = assignmentName.replace(/[^a-z0-9]/gi, '_');
+
+const assignmentHtml = `  
+<html>  
+  <body>  
     <h1>${assignmentName}</h1>  
     <textarea id="essay_input" rows="10" cols="50" placeholder="Paste/type essay to be graded"></textarea>  
     <br/>  
@@ -999,47 +1004,43 @@
       const essayInput = document.getElementById('essay_input');  
       const submitButton = document.getElementById('submit_essay');  
       const gradeOutput = document.getElementById('grade_output');  
-  
+
       submitButton.addEventListener('click', async () => {  
-       const essayText = essayInput.value;  
-       const grade = await predictGrade(essayText);  
-       gradeOutput.innerText = 'Grade: ' + grade;  
+        const essayText = essayInput.value;  
+        const grade = await predictGrade(essayText);  
+        gradeOutput.innerText = 'Grade: ' + grade;  
       });  
     </script>  
-   </body>  
-  </html>  
-`;
-  
-    const teacherHtml = `  
-      <html>  
-       <body>  
-        <h1>${assignmentName} (Teacher View)</h1>  
-        <table id="grades_table">  
-          <tr>  
-           <th>Student</th>  
-           <th>Grade</th>  
-          </tr>  
-        </table>  
-        <script>  
-          const gradesTable = document.getElementById('grades_table');  
-          const assignmentData = ${JSON.stringify(assignmentData)};  
-  
-          Object.keys(assignmentData).forEach((student) => {  
-           const row = gradesTable.insertRow();  
-           row.innerHTML = \`  
-            <td>\${student}</td>  
-            <td>\${assignmentData[student]}</td>  
-           \`;  
-          });  
-        </script>  
-       </body>  
-      </html>  
-    `;  
-  
-    const fs = require('fs');  
-    fs.writeFileSync(`assignment${assignmentName}student.html`, assignmentHtml);  
-    fs.writeFileSync(`assignment${assignmentName}teacher.html`, teacherHtml);  
-   }  
+  </body>  
+</html> `;
+
+const teacherHtml = `  
+<html>  
+  <body>  
+    <h1>${assignmentName} (Teacher View)</h1>  
+    <table id="grades_table">  
+      <tr>  
+        <th>Student</th>  
+        <th>Grade</th>  
+      </tr>  
+    </table>  
+    <script>  
+      const gradesTable = document.getElementById('grades_table');  
+      const assignmentData = ${JSON.stringify(assignmentData)}; // Embed JSON data as a JavaScript object
+
+      Object.keys(assignmentData).forEach((student) => {  
+        const row = gradesTable.insertRow();  
+        row.innerHTML = \`  
+          <td>\${student}</td>  
+          <td>\${assignmentData[student]}</td>  
+        \`;  
+      });  
+    </script>  
+  </body>  
+</html> `;
+
+fs.writeFileSync(`assignment${sanitizedAssignmentName}student.html`, assignmentHtml);
+fs.writeFileSync(`assignment${sanitizedAssignmentName}teacher.html`, teacherHtml);
   
    // Function to predict grade  
    async function predictGrade(essayText) {  
