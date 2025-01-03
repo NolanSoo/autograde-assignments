@@ -864,38 +864,35 @@
               }  
            });  
   
-           document.getElementById("next-button").addEventListener("click", () => {  
-              if (currentIndex < rows.length - 1) {  
-                currentIndex++;  
-                const nextRow = rows[currentIndex];  
-                const nextEssayInput = nextRow.querySelector("td:nth-child(1) input");  
-                const nextGradeInput = nextRow.querySelector("td:nth-child(2) input");  
-                const nextSubgradeCells = nextRow.querySelectorAll("td:nth-child(n+3):not(:last-child)");  
-                const nextFeedbackInput = nextRow.querySelector("td:last-child input");  
-  
-                // Update the modal with the next row's data  
-                essayDiv.innerHTML = nextEssayInput.value;  
-                gradeInputModal.value = nextGradeInput.value;  
-                subgradesDiv.innerHTML = "";  
-                nextSubgradeCells.forEach((cell, index) => {  
-                   const subgradeInput = cell.querySelector("input");  
-                   const subgradeLabel = document.createElement("label");  
-                   subgradeLabel.textContent = subgradeHeaders[index].textContent;  
-                   if (subgradeLabel.textContent !== "Actions") {  
-                      const subgradeValue = document.createElement("input");  
-                      subgradeValue.type = "text";  
-                      subgradeValue.value = subgradeInput.value;  
-                      subgradesDiv.appendChild(subgradeLabel);  
-                      subgradesDiv.appendChild(subgradeValue);  
-                   }  
-                });  
-                feedbackInputModal.value = nextFeedbackInput.value;  
-                navigationDiv.querySelector("span").textContent = `Essay ${currentIndex + 1}/${rows.length}`;  
-              }  
-           });  
-        }  
-      );  
-  
+          document.getElementById("next-button").addEventListener("click", () => {  
+   if (currentIndex < rows.length - 1) {  
+      currentIndex++;  
+      const nextRow = rows[currentIndex];  
+      const nextEssayInput = nextRow.querySelector("td:nth-child(1) input");  
+      const nextGradeInput = nextRow.querySelector("td:nth-child(2) input");  
+      const nextSubgradeCells = nextRow.querySelectorAll("td:nth-child(n+3):not(:last-child)");  
+      const nextFeedbackInput = nextRow.querySelector("td:last-child input");  
+
+      // Update the modal with the next row's data  
+      essayDiv.innerHTML = nextEssayInput.value;  
+      gradeInputModal.value = nextGradeInput.value;  
+      subgradesDiv.innerHTML = "";  
+      nextSubgradeCells.forEach((cell, index) => {  
+         const subgradeInput = cell.querySelector("input");  
+         const subgradeLabel = document.createElement("label");  
+         subgradeLabel.textContent = subgradeHeaders[index].textContent;  
+         if (subgradeLabel.textContent !== "Actions") {  
+            const subgradeValue = document.createElement("input");  
+            subgradeValue.type = "text";  
+            subgradeValue.value = subgradeInput.value;  
+            subgradesDiv.appendChild(subgradeLabel);  
+            subgradesDiv.appendChild(subgradeValue);  
+         }  
+      });  
+      feedbackInputModal.value = nextFeedbackInput.value;  
+      navigationDiv.querySelector("span").textContent = `Essay ${currentIndex + 1}/${rows.length}`;  
+   }  
+});  
       // Create teacher page  
       const teacherPage = document.createElement('div');  
       teacherPage.innerHTML = `<h1>Teacher Page</h1><h2>View Grades</h2><table id="grades_table"><tr><th>Student Name</th><th>Grade</th></tr></table>`;  
